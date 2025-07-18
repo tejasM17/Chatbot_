@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chat with Bot</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #1e3c72, #2a5298);
+        color: #fff;
+        padding: 20px;
+      }
+
+      .chat-container {
+        width: 100%;
+        max-width: 600px;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(12px);
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      }
+
+      h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 28px;
+      }
+
+      #chatbox {
+        max-height: 300px;
+        overflow-y: auto;
+        margin-bottom: 20px;
+        padding: 10px;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+      }
+
+      .user-msg,
+      .bot-msg {
+        margin-bottom: 10px;
+      }
+
+      .user-msg {
+        text-align: right;
+        color: #ffd369;
+      }
+
+      .bot-msg {
+        text-align: left;
+        color: #eeeeee;
+      }
+
+      form {
+        display: flex;
+        gap: 10px;
+      }
+
+      #userInput {
+        flex: 1;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        outline: none;
+        font-size: 16px;
+      }
+
+      button {
+        background: #00adb5;
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: 0.3s;
+      }
+
+      button:hover {
+        background: #008b8f;
+      }
+
+      #response {
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="chat-container">
+      <h2>🤖 Hello! Ask Me Anything</h2>
+
+      <div id="chatbox"></div>
+
+      <form action="/get" method="get" onsubmit="sendMessage(event)">
+        <input
+          type="text"
+          id="userInput"
+          name="msg"
+          placeholder="Ask your question..."
+          required />
+        <button type="submit">Send</button>
+      </form>
+
+      <div id="response"></div>
+    </div>
+
+    <script>
+      function sendMessage(event) {
+        event.preventDefault();
+        const userInput = document.getElementById("userInput");
+        const msg = userInput.value;
+
+        // Display user message
+        document.getElementById(
+          "chatbox"
+        ).innerHTML += `<p class="user-msg"><strong>You:</strong> ${msg}</p>`;
+
+        fetch(`/get?msg=${msg}`)
+          .then((response) => response.text())
+          .then((data) => {
+            document.getElementById(
+              "chatbox"
+            ).innerHTML += `<p class="bot-msg"><strong>Bot:</strong> ${data}</p>`;
+            document.getElementById("chatbox").scrollTop =
+              document.getElementById("chatbox").scrollHeight;
+          });
+
+        userInput.value = "";
+      }
+    </script>
+  </body>
+</html>
